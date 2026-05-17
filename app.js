@@ -76,12 +76,13 @@ $('login-form').addEventListener('submit', async e => {
     localStorage.setItem('tv_stream', stream);
     bootApp(user);
   } catch (ex) {
-    const msg = (ex.message || '').includes('400') || (ex.message || '').includes('401')
+    const msg = ex.message?.includes('401') || ex.message?.includes('inválidas')
       ? 'Usuário ou senha incorretos.'
-      : ex.message?.includes('fetch') || ex.message?.includes('network')
+      : ex.message?.includes('fetch') || ex.message?.includes('network') || ex.message?.includes('Failed')
       ? 'Sem conexão. Verifique sua internet.'
-      : 'Usuário ou senha incorretos.';
+      : ex.message || 'Erro ao conectar. Tente novamente.';
     showToast(msg, 'error');
+    console.error('[login error]', ex);
   } finally {
     btn.disabled = false;
     $('btn-login-text').textContent = 'Entrar';
