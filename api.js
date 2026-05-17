@@ -104,7 +104,7 @@ export function removeFavorite(contentId) {
 
 // Stream URLs — direct to stream server (not proxied, media doesn't need CORS)
 export function streamUrl(type, id, ext) {
-  const base = _streamBase;
+  const base = (location.protocol === 'https:' ? _streamBase.replace('http://', 'https://') : _streamBase);
   if (type === 'live')   return `${base}/live/${_user}/${_pass}/${id}.m3u8`;
   if (type === 'movie')  return `${base}/movie/${_user}/${_pass}/${id}.${ext || 'mp4'}`;
   return `${base}/series/${_user}/${_pass}/${id}.${ext || 'mp4'}`;
