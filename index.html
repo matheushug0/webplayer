@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>WebTV</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- ═══ LOGIN ═══════════════════════════════════════════════ -->
+<div id="view-login" class="view active">
+  <div class="login-bg"></div>
+
+  <!-- Header -->
+  <header class="login-header">
+    <img src="logo.png" alt="WebTV" class="login-brand"/>
+  </header>
+
+  <!-- Main -->
+  <main class="login-main">
+    <div class="login-box" id="login-box">
+      <h1 class="login-title">Informe seus dados para entrar</h1>
+      <form id="login-form">
+        <div class="field">
+          <input id="inp-user" type="text" placeholder="Usuário" autocomplete="username" required/>
+        </div>
+        <div class="field">
+          <input id="inp-pass" type="password" placeholder="Senha" autocomplete="current-password" required/>
+        </div>
+        <button type="submit" id="btn-login">
+          <span id="btn-login-text">Entrar</span>
+          <span id="btn-login-spinner" class="btn-spinner hidden"></span>
+        </button>
+      </form>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="login-footer">
+    <div class="login-footer-inner">
+      <p class="login-footer-contact">Quer ter acesso? <a href="https://wa.me/558387440446?text=Quero%20meu%20teste!" target="_blank">Fale conosco pelo WhatsApp</a></p>
+      <div class="login-footer-links">
+        <a href="#">Perguntas frequentes</a>
+        <a href="#">Central de Ajuda</a>
+        <a href="#">Termos de Uso</a>
+        <a href="#">Privacidade</a>
+        <a href="#">Preferências de cookies</a>
+        <a href="#">Informações corporativas</a>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- ═══ APP ══════════════════════════════════════════════════ -->
+<div id="view-app" class="view hidden">
+
+  <!-- NAVBAR -->
+  <header id="navbar">
+    <div class="navbar-left">
+      <img src="logo.png" alt="WebTV" class="nav-logo"/>
+    </div>
+    <nav class="nav-links">
+      <button class="nav-link active" data-tab="live">Canais</button>
+      <button class="nav-link" data-tab="movies">Filmes</button>
+      <button class="nav-link" data-tab="series">Séries</button>
+      <button class="nav-link" data-tab="favorites">Favoritos</button>
+    </nav>
+    <div class="navbar-right">
+      <div id="search-wrap" class="collapsed">
+        <button id="btn-search" class="nav-icon-btn" aria-label="Buscar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </button>
+        <input id="search-input" type="search" placeholder="Buscar..." autocomplete="off"/>
+      </div>
+      <div class="nav-user">
+        <span id="nav-username"></span>
+        <button id="btn-logout" class="nav-icon-btn" title="Sair">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
+      </div>
+      <button id="btn-menu" class="nav-icon-btn" aria-label="Menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- MOBILE DRAWER -->
+  <div id="drawer-overlay" class="hidden"></div>
+  <nav id="drawer">
+    <div class="drawer-header">
+      <img src="logo.png" alt="WebTV" class="drawer-logo"/>
+      <button id="btn-drawer-close" class="nav-icon-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <ul class="drawer-list">
+      <li><button class="drawer-btn active" data-tab="live">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="15" rx="2"/><polyline points="17 2 12 7 7 2"/></svg>
+        Canais ao Vivo
+      </button></li>
+      <li><button class="drawer-btn" data-tab="movies">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2"/><path d="M7 2v20M17 2v20M2 12h20M2 7h5M2 17h5M17 7h5M17 17h5"/></svg>
+        Filmes
+      </button></li>
+      <li><button class="drawer-btn" data-tab="series">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        Séries
+      </button></li>
+      <li><button class="drawer-btn" data-tab="favorites">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        Favoritos
+      </button></li>
+    </ul>
+    <div class="drawer-footer">
+      <span id="drawer-username"></span>
+      <button id="btn-drawer-logout" class="drawer-logout">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sair
+      </button>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <div id="main">
+
+    <!-- Hero (filled dynamically) -->
+    <div id="hero" class="hidden"></div>
+
+    <!-- Content -->
+    <div id="content-area">
+      <div id="loader" class="hidden">
+        <div class="skeleton-carousel">
+          <div class="skeleton-card" style="--d:0"></div>
+          <div class="skeleton-card" style="--d:1"></div>
+          <div class="skeleton-card" style="--d:2"></div>
+          <div class="skeleton-card" style="--d:3"></div>
+          <div class="skeleton-card" style="--d:4"></div>
+          <div class="skeleton-card" style="--d:5"></div>
+        </div>
+      </div>
+      <p id="empty-msg" class="hidden">Nenhum resultado encontrado.</p>
+      <!-- Carousels injected here by JS -->
+      <div id="grid"></div>
+      <div id="scroll-sentinel"></div>
+      <div id="pagination" class="hidden">
+        <button id="btn-prev" class="page-btn" disabled>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          Anterior
+        </button>
+        <span id="page-info"></span>
+        <button id="btn-next" class="page-btn">
+          Próxima
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══ PLAYER MODAL (video) ════════════════════════════════ -->
+<div id="player-modal" class="modal hidden">
+  <div id="modal-backdrop"></div>
+  <div class="modal-box player-modal-box">
+    <div class="player-topbar">
+      <button id="btn-modal-close" class="modal-close">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <span class="player-topbar-title" id="player-topbar-title"></span>
+      <button id="btn-cast" class="player-mirror-btn" title="Transmitir para TV" style="display:none">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5A12.5 12.5 0 0 1 14.5 21"/><path d="M2 13a8 8 0 0 1 8 8"/><circle cx="2" cy="21" r="1"/><rect x="14" y="3" width="8" height="14" rx="1"/><path d="M14 8H2"/></svg>
+      </button>
+    </div>
+    <video id="video-el" controls playsinline></video>
+    <div class="modal-info">
+      <h2 id="modal-title"></h2>
+      <p id="modal-meta"></p>
+      <p id="modal-plot"></p>
+      <div id="epg-wrap" class="hidden">
+        <div class="epg-header">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Programação
+        </div>
+        <ul id="epg-list"></ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ INFO MODAL (filme) ══════════════════════════════════ -->
+<div id="info-modal" class="modal hidden">
+  <div id="info-backdrop"></div>
+  <div class="modal-box info-modal-box">
+    <button id="btn-info-close" class="modal-close">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="info-banner">
+      <img id="info-banner-img" src="" alt=""/>
+      <div class="info-banner-overlay"></div>
+      <div class="info-banner-content">
+        <h2 id="info-title"></h2>
+        <p id="info-meta"></p>
+        <div class="info-actions">
+          <button id="btn-info-play" class="hero-btn-play">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Assistir
+          </button>
+          <button id="btn-info-fav" class="info-fav-btn" title="Favoritar">
+            <svg id="info-fav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-info">
+      <p id="info-plot"></p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SERIES MODAL ═════════════════════════════════════════ -->
+<div id="series-modal" class="modal hidden">
+  <div id="series-backdrop"></div>
+  <div class="modal-box info-modal-box">
+    <button id="btn-series-close" class="modal-close">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="info-banner">
+      <img id="series-banner-img" src="" alt=""/>
+      <div class="info-banner-overlay"></div>
+      <div class="info-banner-content">
+        <h2 id="series-title"></h2>
+        <p id="series-meta"></p>
+        <div class="info-actions">
+          <button id="btn-series-fav" class="info-fav-btn" title="Favoritar">
+            <svg id="series-fav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-info">
+      <p id="series-plot"></p>
+      <div id="seasons-wrap"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1/dist/hls.min.js"></script>
+<script type="module" src="app.js"></script>
+</body>
+</html>
