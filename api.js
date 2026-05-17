@@ -29,8 +29,8 @@ export function configure(streamServerUrl, username, password) {
   _pass = password;
 }
 
-async function xtream(params) {
-  const base = _streamBase ? _streamBase + '/player_api.php' : API_BASE;
+async function xtream(params, forceBase) {
+  const base = forceBase || (_streamBase ? _streamBase + '/player_api.php' : API_BASE);
   const url = new URL(base);
   url.searchParams.set('username', _user);
   url.searchParams.set('password', _pass);
@@ -48,9 +48,9 @@ async function cached(key, fetcher) {
   return data;
 }
 
-// Auth — never cached (always fresh)
+// Auth — always uses fixed API_BASE regardless of _streamBase
 export function auth() {
-  return xtream({});
+  return xtream({}, API_BASE);
 }
 
 // Tabs — cached per user to avoid re-downloading MBs
