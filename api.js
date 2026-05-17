@@ -6,7 +6,6 @@ const CACHE_TTL = 3600; // 1 hour
 const API_BASE = 'http://webnewtvs.top/api/player_api.php';
 // Favorites stored in localStorage — no CORS issues
 
-// Proxy para contornar Mixed Content em HTTPS
 function proxyUrl(url) {
   if (location.protocol === 'https:' && url.startsWith('http:')) {
     return '/api/proxy?url=' + encodeURIComponent(url);
@@ -48,9 +47,14 @@ async function cached(key, fetcher) {
   return data;
 }
 
-// Auth — always uses fixed API_BASE regardless of _streamBase
-export function auth() {
-  return xtream({}, API_BASE);
+// Auth — direto do browser sem proxy (evita bloqueio de IP)
+export async function auth() {
+  const url = new URL(API_BASE);
+  url.searchParams.set('username', _user);
+  url.searchParams.set('password', _pass);
+  const r = await fetch(url.toString());
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return r.json();
 }
 
 // Tabs — cached per user to avoid re-downloading MBs
