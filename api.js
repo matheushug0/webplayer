@@ -8,10 +8,15 @@ const API_BASE = 'http://webnewtvs.top/api/player_api.php';
 
 // Proxy para contornar Mixed Content em HTTPS
 function proxyUrl(url) {
-  if (location.protocol === 'https:') {
+  if (location.protocol === 'https:' && url.startsWith('http:')) {
     return '/api/proxy?url=' + encodeURIComponent(url);
   }
   return url;
+}
+
+export function imgUrl(url) {
+  if (!url) return '';
+  return proxyUrl(url);
 }
 
 let _streamBase = '';

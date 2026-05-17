@@ -298,7 +298,7 @@ function buildCarousel(title, items) {
 }
 function renderHero(item) {
   const hero = $('hero');
-  const img  = item.stream_icon || item.cover || item.backdrop_path?.[0] || '';
+  const img  = API.imgUrl(item.stream_icon || item.cover || item.backdrop_path?.[0] || '');
   const rating = parseFloat(item.rating);
 
   hero.innerHTML = `
@@ -394,7 +394,7 @@ function buildCard(item) {
   img.className = 'card-img';
   img.loading = 'lazy';
   img.alt = item.name || '';
-  img.src = item.stream_icon || item.cover || '';
+  img.src = API.imgUrl(item.stream_icon || item.cover || '');
   img.onerror = () => img.classList.add('no-img');
 
   const play = document.createElement('div');
@@ -480,7 +480,7 @@ if ('remote' in HTMLVideoElement.prototype) {
 function openInfoModal(item) {
   S.currentItem = item;
   const id  = item.stream_id || item._favId;
-  const img = item.backdrop_path?.[0] || item.stream_icon || item.cover || '';
+  const img = API.imgUrl(item.backdrop_path?.[0] || item.stream_icon || item.cover || '');
   $('info-banner-img').src = img;
   $('info-title').textContent = item.name || '';
   $('info-meta').textContent  = [item.genre, item.releaseDate || item.releasedate, item.rating ? '★ ' + parseFloat(item.rating).toFixed(1) : ''].filter(Boolean).join(' · ');
@@ -506,7 +506,7 @@ $('btn-info-fav').addEventListener('click', () => toggleFav($('btn-info-fav'), $
 async function openSeriesModal(item) {
   S.currentItem = item;
   const id  = item.series_id || item._favId;
-  const img = item.backdrop_path?.[0] || item.cover || item.stream_icon || '';
+  const img = API.imgUrl(item.backdrop_path?.[0] || item.cover || item.stream_icon || '');
   $('series-banner-img').src = img;
   $('series-title').textContent = item.name || '';
   $('series-meta').textContent  = [item.genre, item.releaseDate, item.rating ? '★ ' + parseFloat(item.rating).toFixed(1) : ''].filter(Boolean).join(' · ');
