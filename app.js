@@ -63,17 +63,15 @@ $('login-form').addEventListener('submit', async e => {
   $('btn-login-text').textContent = 'Entrando…';
   show($('btn-login-spinner'));
   try {
+    const server = $('inp-server').value.trim().replace(/\/$/, '');
     const user = $('inp-user').value.trim();
     const pass = $('inp-pass').value.trim();
-    API.configure('', user, pass);
+    API.configure(server, user, pass);
     const d = await API.auth();
     if (!d.user_info || d.user_info.auth !== 1) throw new Error('Credenciais inválidas');
-    const { server_protocol, url, port } = d.server_info;
-    const stream = `${server_protocol}://${url}:${port}`;
-    API.configure(stream, user, pass);
     localStorage.setItem('tv_user', user);
     localStorage.setItem('tv_pass', pass);
-    localStorage.setItem('tv_stream', stream);
+    localStorage.setItem('tv_stream', server);
     bootApp(user);
   } catch (ex) {
     const msg = ex.message?.includes('401') || ex.message?.includes('inválidas')
