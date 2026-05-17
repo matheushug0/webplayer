@@ -1,5 +1,6 @@
 {
-  "rewrites": [
-    { "source": "/api/proxy/:path*", "destination": "/api/proxy.js" }
-  ]
+  "functions": {
+    "api/proxy.js": { "maxDuration": 30 },
+    "api/stream.js": { "maxDuration": 30 }
+  }
 }
