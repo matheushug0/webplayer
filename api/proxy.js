@@ -1,14 +1,35 @@
 export default async function handler(req, res) {
-  const target = req.query.url;
-  if (!target) return res.status(400).json({ error: 'Missing url param' });
+  const { url } = req.query;
+  if (!url) return res.status(400).json({ error: 'Missing url' });
+
+  const target = decodeURIComponent(url);
 
   try {
-    const response = await fetch(decodeURIComponent(target));
-    const contentType = response.headers.get('content-type') || 'application/json';
-    const buffer = await response.arrayBuffer();
+    const upstream = await fetch(target, {
+      headers: { 'User-Agent': 'Mozilla/5.0' },
+    });
+
+    if (!upstream.ok) return res.status(upstream.status).end();
+
+    const contentType = upstream.headers.get('content-type') || 'application/octet-stream';
     res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Content-Type', contentType);
-    res.status(response.status).send(Buffer.from(buffer));
+
+    if (target.includes('.m3u8')) {
+      const text = await upstream.text();
+      const baseUrl = target.substring(0, target.lastIndexOf('/') + 1);
+      const rewritten = text.split('\n').map(line => {
+        const t = line.trim();
+        if (!t || t.startsWith('#')) return line;
+        const abs = t.startsWith('http') ? t : baseUrl + t;
+        return '/api/proxy?url=' + encodeURIComponent(abs);
+      }).join('\n');
+      return res.status(200).send(rewritten);
+    }
+
+    const buffer = await upstream.arrayBuffer();
+    res.status(200).send(Buffer.from(buffer));
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
