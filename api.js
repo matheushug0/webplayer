@@ -47,12 +47,12 @@ async function cached(key, fetcher) {
   return data;
 }
 
-// Auth — direto do browser sem proxy (evita bloqueio de IP)
 export async function auth() {
-  const url = new URL(API_BASE);
+  const base = _streamBase ? _streamBase + '/player_api.php' : API_BASE;
+  const url = new URL(base);
   url.searchParams.set('username', _user);
   url.searchParams.set('password', _pass);
-  const r = await fetch(url.toString());
+  const r = await fetch(proxyUrl(url.toString()));
   if (!r.ok) throw new Error(`HTTP ${r.status}`);
   return r.json();
 }
