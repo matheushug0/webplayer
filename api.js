@@ -3,7 +3,7 @@ import { cacheGet, cacheSet } from './db.js';
 
 const CACHE_TTL = 3600; // 1 hour
 
-const API_BASE_DEFAULT = 'http://webnewtvs.top/api/player_api.php';
+const API_BASE = 'http://webnewtvs.top/api/player_api.php';
 // Favorites stored in localStorage — no CORS issues
 
 // Proxy para contornar Mixed Content em HTTPS
@@ -30,7 +30,7 @@ export function configure(streamServerUrl, username, password) {
 }
 
 async function xtream(params) {
-  const base = _streamBase ? _streamBase + '/player_api.php' : API_BASE_DEFAULT;
+  const base = _streamBase ? _streamBase + '/player_api.php' : API_BASE;
   const url = new URL(base);
   url.searchParams.set('username', _user);
   url.searchParams.set('password', _pass);
