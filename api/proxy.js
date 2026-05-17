@@ -9,8 +9,6 @@ export default async function handler(req, res) {
       headers: { 'User-Agent': 'Mozilla/5.0' },
     });
 
-    if (!upstream.ok) return res.status(upstream.status).end();
-
     const contentType = upstream.headers.get('content-type') || 'application/octet-stream';
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Cache-Control', 'no-cache');
@@ -25,11 +23,11 @@ export default async function handler(req, res) {
         const abs = t.startsWith('http') ? t : baseUrl + t;
         return '/api/proxy?url=' + encodeURIComponent(abs);
       }).join('\n');
-      return res.status(200).send(rewritten);
+      return res.status(upstream.status).send(rewritten);
     }
 
     const buffer = await upstream.arrayBuffer();
-    res.status(200).send(Buffer.from(buffer));
+    res.status(upstream.status).send(Buffer.from(buffer));
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
