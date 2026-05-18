@@ -6,7 +6,7 @@ const CACHE_TTL = 3600; // 1 hour
 const API_BASE = 'http://webnewtvs.top/api/player_api.php';
 // Favorites stored in localStorage — no CORS issues
 
-const RAILWAY_PROXY = 'https://proxy-server-services.up.railway.app';
+const RAILWAY_PROXY = 'https://proxy.fluiconnect.com.br';
 
 function proxyUrl(url) {
   if (location.protocol === 'https:' && url.startsWith('http:')) {
