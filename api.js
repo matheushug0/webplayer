@@ -1,16 +1,22 @@
 // api.js — Xtream Codes API with IndexedDB cache
 import { cacheGet, cacheSet } from './db.js';
 
-const CACHE_TTL = 3600; // 1 hour
+const CACHE_TTL = 21600; // 6 hours
 
 const API_BASE = 'http://webnewtvs.top/api/player_api.php';
 // Favorites stored in localStorage — no CORS issues
 
-const RAILWAY_PROXY = 'https://proxy-server-services.up.railway.app';
+const PROXIES = [
+  'https://proxy-server-services.up.railway.app',
+  'https://proxy-server-2.up.railway.app',
+  'https://proxy-server-3-services.up.railway.app',
+  'https://proxy.fluiconnect.com.br',
+];
+let _proxyIndex = 0;
 
 function proxyUrl(url) {
   if (location.protocol === 'https:' && url.startsWith('http:')) {
-    return RAILWAY_PROXY + '?url=' + encodeURIComponent(url);
+    return PROXIES[_proxyIndex] + '?url=' + encodeURIComponent(url);
   }
   return url;
 }
@@ -36,9 +42,17 @@ async function xtream(params, forceBase) {
   url.searchParams.set('username', _user);
   url.searchParams.set('password', _pass);
   for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
-  const r = await fetch(proxyUrl(url.toString()));
-  if (!r.ok) throw new Error(`HTTP ${r.status}`);
-  return r.json();
+
+  for (let i = 0; i < PROXIES.length; i++) {
+    const idx = (_proxyIndex + i) % PROXIES.length;
+    const proxyUrl = location.protocol === 'https:' && url.toString().startsWith('http:')
+      ? PROXIES[idx] + '?url=' + encodeURIComponent(url.toString())
+      : url.toString();
+    const r = await fetch(proxyUrl);
+    if (r.ok) { _proxyIndex = idx; return r.json(); }
+    if (r.status !== 404) throw new Error(`HTTP ${r.status}`);
+  }
+  throw new Error('All proxies blocked');
 }
 
 async function cached(key, fetcher) {
