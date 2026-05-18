@@ -630,7 +630,7 @@ function playStream(url) {
   stopPlayer();
   const video = $('video-el');
   if (url.includes('.m3u8') && Hls.isSupported()) {
-    S.hls = new Hls({ maxBufferLength: 30 });
+    S.hls = new Hls({ maxBufferLength: 60, maxMaxBufferLength: 120, lowLatencyMode: false });
     S.hls.loadSource(url);
     S.hls.attachMedia(video);
     S.hls.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(() => {}));
