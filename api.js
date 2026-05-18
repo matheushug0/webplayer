@@ -118,7 +118,7 @@ export function streamUrl(type, id, ext) {
   else url = `${base}/series/${_user}/${_pass}/${id}.${ext || 'mp4'}`;
 
   if (location.protocol === 'https:') {
-    return '/api/proxy?url=' + encodeURIComponent(url);
+    return RAILWAY_PROXY + '?url=' + encodeURIComponent(url);
   }
   return url;
 }
