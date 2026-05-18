@@ -114,8 +114,8 @@ export function streamUrl(type, id, ext) {
   const base = _streamBase;
   let url;
   if (type === 'live')        url = `${base}/live/${_user}/${_pass}/${id}.m3u8`;
-  else if (type === 'movie')  url = `${base}/movie/${_user}/${_pass}/${id}.m3u8`;
-  else                        url = `${base}/series/${_user}/${_pass}/${id}.m3u8`;
+  else if (type === 'movie')  url = `${base}/movie/${_user}/${_pass}/${id}.${ext || 'mp4'}`;
+  else                        url = `${base}/series/${_user}/${_pass}/${id}.${ext || 'mp4'}`;
 
   if (location.protocol === 'https:') {
     return RAILWAY_PROXY + '?url=' + encodeURIComponent(url);
