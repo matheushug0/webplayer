@@ -10,7 +10,6 @@ const PROXIES = [
   'https://proxy-server-services.up.railway.app',
   'https://proxy-server-2.up.railway.app',
   'https://proxy-server-3-services.up.railway.app',
-  'https://proxy.fluiconnect.com.br',
 ];
 let _proxyIndex = 0;
 
