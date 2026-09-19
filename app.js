@@ -329,8 +329,17 @@ function renderHero(item) {
     </div>
   `;
 
-  hero.querySelector('[data-hero-play]').addEventListener('click', () => onCardClick(item));
-  hero.querySelector('[data-hero-info]').addEventListener('click', () => onCardClick(item));
+  const isSeries = !!(item.series_id) || item._favType === 'series';
+  const isLive = item.stream_type === 'live' || item._favType === 'live' || S.tab === 'live';
+
+  const heroPlay = hero.querySelector('[data-hero-play]');
+  const heroInfo = hero.querySelector('[data-hero-info]');
+  heroPlay.addEventListener('click', () => {
+    if (isSeries) return openSeriesModal(item);
+    openPlayerModal(item);
+  });
+  if (isLive) { heroInfo.classList.add('hidden'); }
+  else heroInfo.addEventListener('click', () => onCardClick(item));
   show(hero);
 }
 
@@ -357,7 +366,7 @@ function renderSearchGrid(items) {
   grid.appendChild(frag);
   show(grid);
 
-  if (pages > 1) {
+  if (!S.query && pages > 1) {
     $('page-info').textContent = `${S.page} / ${pages}`;
     $('btn-prev').disabled = S.page <= 1;
     $('btn-next').disabled = S.page >= pages;
@@ -423,6 +432,15 @@ function buildCard(item) {
 
   footer.append(title, meta);
   card.append(wrap, footer);
+
+  card.tabIndex = 0;
+  card.setAttribute('role', 'button');
+  card.setAttribute('aria-label', item.name || '');
+  card.addEventListener('keydown', e => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    e.preventDefault();
+    onCardClick(item);
+  });
   card.addEventListener('click', () => onCardClick(item));
   return card;
 }
