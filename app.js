@@ -282,13 +282,33 @@ function buildCarousel(title, items) {
     <div class="carousel-header">
       <div class="carousel-marker"></div>
       <h2 class="carousel-title">${title}</h2>
+      <div class="carousel-arrows">
+        <button type="button" class="carousel-arrow" data-scroll="-1" aria-label="Rolar ${title} para a esquerda">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <button type="button" class="carousel-arrow" data-scroll="1" aria-label="Rolar ${title} para a direita">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+      </div>
     </div>
   `;
 
   const track = document.createElement('div');
   track.className = 'carousel-track';
 
-
+  // Arrow buttons scroll the track by ~one viewport of cards.
+  section.querySelectorAll('.carousel-arrow').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const dir = parseInt(btn.dataset.scroll, 10);
+      const vw = Math.max(track.clientWidth, 1);
+      const delta = dir * vw * 0.8;
+      if ('scrollBy' in track) {
+        track.scrollBy({ left: delta, behavior: 'smooth' });
+      } else {
+        track.scrollLeft += delta Barnett;
+      }
+    });
+  });
 
   // Store items for lazy injection — don't build DOM yet
   track._pendingItems = items;
@@ -754,9 +774,12 @@ function fmtTime(s) {
 function getPlayerDuration() {
   const v = $('video-el');
   if (isFinite(v.duration) && v.duration > 0) return v.duration;
+  const isVod = !isLiveStream(); // filme/série via Xtream = contexto VOD
   if (S.hls && S.hls.levels && S.hls.levels[0] && S.hls.levels[0].details) {
     const d = S.hls.levels[0].details;
-    if (!d.live && d.totalduration > 0) return d.totalduration;
+    // Em VOD o totalduration é a duração real do manifest mesmo quando o
+    // servidor o marca como live (fake-live comum em servidores Xtream/IPTV).
+    if (d.totalduration > 0 && (isVod || !d.live)) return d.totalduration;
   }
   if (v.seekable && v.seekable.length && isFinite(v.seekable.end(v.seekable.length - 1))) {
     return v.seekable.end(v.seekable.length - 1);
@@ -768,6 +791,14 @@ function isLiveStream() {
   const it = S.currentItem || {};
   const t = it.stream_type || it._favType;
   if (t === 'live') return true;
+  // Filmes e séries são VOD por definição: mesmo que o servidor sirva o
+  // manifest com flag live (comum em Xtream/IPTV que embrulha VOD),
+  // mostramos tempo total e progresso usando o totalduration do hls.
+  if (t === 'movie' || t === 'series') return false;
+  switch (S.tab) {
+    case 'movies': case 'series': case 'favorites': return false;
+  }
+  if ((it._favType === 'movie' || it._favType === 'series') && it.stream_type !== 'live') return false;
   if (S.hls && S.hls.levels && S.hls.levels[0] && S.hls.levels[0].details) {
     return !!S.hls.levels[0].details.live;
   }

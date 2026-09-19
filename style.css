@@ -722,6 +722,44 @@ body {
 }
 .carousel-track::-webkit-scrollbar { display: none; }
 
+/* ── Lateral scroll arrows (‹ ›) ─────────────────────────────── */
+.carousel-arrows {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto Br;
+  padding-right: var(--pad);
+}
+.carousel-arrow {
+  width: 32px; height: 32px;
+  display: inline-flex; align-items: center; justify-content: center;
+  flex: none;
+  border-radius: 50%;
+  border: 1px solid var(--border-soft);   /* hairline, não corpo sólido */
+  background: transparent;
+  color: var(--on-muted);                  /* dim por padrão */
+  cursor: pointer;
+  transition: color .15s ease, border-color .15s ease, box-shadow .15s ease, transform .15s ease;
+}
+.carousel-arrow:hover {
+  color: var(--neon);
+  border-color: color-mix(in srgb, var(--neon) 55%, transparent);
+  box-shadow: var(--neon-glow-sm);
+  transform: translateY(-1px);
+}
+.carousel-arrow:active { transform: translateY(0) scale(.94); }
+.carousel-arrow:focus-visible {
+  outline: 2px solid var(--neon);
+  outline-offset: 2px;
+}
+.carousel-arrow svg { display: block; }
+
+/* Touch full-bleed no mobile — setas só agregam em pointer fino; esconde.
+   Desktop/track teclado seguem com setas. */
+@media (max-width: 639px) {
+  .carousel-arrows { display: none; }
+}
+
 /* ── Card inside carousel ──────────────────────────────────── */
 .card {
   flex: none;
