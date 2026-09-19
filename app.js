@@ -305,7 +305,7 @@ function buildCarousel(title, items) {
       if ('scrollBy' in track) {
         track.scrollBy({ left: delta, behavior: 'smooth' });
       } else {
-        track.scrollLeft += delta Barnett;
+        track.scrollLeft += delta;
       }
     });
   });
