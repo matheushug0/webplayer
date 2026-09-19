@@ -821,17 +821,18 @@ function updatePlayerUI() {
     show(iconPause); hide(iconPlay);
     playerStage.classList.remove('paused');
   }
-  const dur = isLiveStream() ? 0 : getPlayerDuration();
+  const live = isLiveStream();
+  const dur  = live ? 0 : getPlayerDuration();
   const timeEl = $('player-time');
   const fill = $('player-progress-fill');
-  if (!dur) {
+  if (live) {
     timeEl.classList.add('live');
     timeEl.textContent = `● AO VIVO · ${fmtTime(v.currentTime)}`;
     fill.style.width = '0%';
   } else {
     timeEl.classList.remove('live');
     timeEl.textContent = `${fmtTime(v.currentTime)} / ${fmtTime(dur)}`;
-    const pct = Math.min(100, (v.currentTime / dur) * 100);
+    const pct = dur ? Math.min(100, (v.currentTime / dur) * 100) : 0;
     fill.style.width = `${pct}%`;
   }
   $('player-progress').setAttribute('aria-valuenow', Math.round(v.currentTime));
