@@ -557,10 +557,10 @@ function cleanEpisodeTitle(raw) {
   return t;
 }
 
-function episodeThumb(ep) {
-  if (ep.movie_image) return API.imgUrl(ep.movie_image);
-  if (ep.youtube_id)  return API.imgUrl(`https://img.youtube.com/vi/${ep.youtube_id}/hqdefault.jpg`);
-  return '';
+function episodeThumb() {
+  const it = S.currentItem || {};
+  const src = it.backdrop_path?.[0] || it.cover || it.stream_icon || '';
+  return API.imgUrl(src);
 }
 
 function renderSeasons(info) {
@@ -589,7 +589,7 @@ function renderSeasons(info) {
 
       const thumb = document.createElement('div');
       thumb.className = 'episode-thumb';
-      const thumbSrc = episodeThumb(ep);
+      const thumbSrc = episodeThumb();
       if (thumbSrc) {
         const img = document.createElement('img');
         img.src = thumbSrc;
@@ -749,6 +749,31 @@ function fmtTime(s) {
   return `${m}:${String(sec).padStart(2, '0')}`;
 }
 
+// hls.js (MSE) mantém video.duration = Infinity mesmo em VOD, então
+// tiramos a duração real do manifest hls ou do range seekable.
+function getPlayerDuration() {
+  const v = $('video-el');
+  if (isFinite(v.duration) && v.duration > 0) return v.duration;
+  if (S.hls && S.hls.levels && S.hls.levels[0] && S.hls.levels[0].details) {
+    const d = S.hls.levels[0].details;
+    if (!d.live && d.totalduration > 0) return d.totalduration;
+  }
+  if (v.seekable && v.seekable.length && isFinite(v.seekable.end(v.seekable.length - 1))) {
+    return v.seekable.end(v.seekable.length - 1);
+  }
+  return 0;
+}
+
+function isLiveStream() {
+  const it = S.currentItem || {};
+  const t = it.stream_type || it._favType;
+  if (t === 'live') return true;
+  if (S.hls && S.hls.levels && S.hls.levels[0] && S.hls.levels[0].details) {
+    return !!S.hls.levels[0].details.live;
+  }
+  return S.tab === 'live';
+}
+
 function updatePlayerUI() {
   const v = $('video-el');
   if (v.paused) {
@@ -760,7 +785,7 @@ function updatePlayerUI() {
     show(iconPause); hide(iconPlay);
     playerStage.classList.remove('paused');
   }
-  const dur = isFinite(v.duration) && v.duration > 0 ? v.duration : 0;
+  const dur = isLiveStream() ? 0 : getPlayerDuration();
   const timeEl = $('player-time');
   const fill = $('player-progress-fill');
   if (!dur) {
@@ -770,7 +795,7 @@ function updatePlayerUI() {
   } else {
     timeEl.classList.remove('live');
     timeEl.textContent = `${fmtTime(v.currentTime)} / ${fmtTime(dur)}`;
-    const pct = (v.currentTime / dur) * 100;
+    const pct = Math.min(100, (v.currentTime / dur) * 100);
     fill.style.width = `${pct}%`;
   }
   $('player-progress').setAttribute('aria-valuenow', Math.round(v.currentTime));
@@ -793,13 +818,21 @@ $('video-el').addEventListener('click', () => {
 centerPlay.addEventListener('click', () => togglePlay());
 $('btn-play').addEventListener('click', togglePlay);
 $('btn-back').addEventListener('click', () => { $('video-el').currentTime = Math.max(0, $('video-el').currentTime - 10); });
-$('btn-fwd').addEventListener('click', () => { $('video-el').currentTime = Math.min($('video-el').duration || 0, $('video-el').currentTime + 10); });
+$('btn-fwd').addEventListener('click', () => {
+  const v = $('video-el');
+  const dur = getPlayerDuration();
+  v.currentTime = Math.min(dur || v.currentTime, v.currentTime + 10);
+});
 
 $('player-progress').addEventListener('click', e => {
   const v = $('video-el');
-  if (!v.duration) return;
+  const dur = getPlayerDuration();
+  if (!dur) return;
   const rect = $('player-progress').getBoundingClientRect();
-  v.currentTime = ((e.clientX - rect.left) / rect.width) * v.duration;
+  const target = ((e.clientX - rect.left) / rect.width) * dur;
+  let max = dur;
+  if (v.seekable && v.seekable.length) max = Math.min(max, v.seekable.end(v.seekable.length - 1));
+  v.currentTime = Math.min(Math.max(0, target), max);
 });
 
 $('btn-mute').addEventListener('click', () => {
