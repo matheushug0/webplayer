@@ -760,10 +760,20 @@ function updatePlayerUI() {
     show(iconPause); hide(iconPlay);
     playerStage.classList.remove('paused');
   }
-  $('player-time').textContent = `${fmtTime(v.currentTime)} / ${fmtTime(v.duration)}`;
-  const pct = v.duration ? (v.currentTime / v.duration) * 100 : 0;
-  $('player-progress-fill').style.width = `${pct}%`;
-  $('player-progress').setAttribute('aria-valuenow', Math.round(pct));
+  const dur = isFinite(v.duration) && v.duration > 0 ? v.duration : 0;
+  const timeEl = $('player-time');
+  const fill = $('player-progress-fill');
+  if (!dur) {
+    timeEl.classList.add('live');
+    timeEl.textContent = `● AO VIVO · ${fmtTime(v.currentTime)}`;
+    fill.style.width = '0%';
+  } else {
+    timeEl.classList.remove('live');
+    timeEl.textContent = `${fmtTime(v.currentTime)} / ${fmtTime(dur)}`;
+    const pct = (v.currentTime / dur) * 100;
+    fill.style.width = `${pct}%`;
+  }
+  $('player-progress').setAttribute('aria-valuenow', Math.round(v.currentTime));
 }
 
 function togglePlay() {
