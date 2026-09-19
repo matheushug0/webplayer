@@ -753,7 +753,7 @@ function stopPlayer() {
 }
 
 // ── Player controls (overlay estilo Theater Mode) ─────────────
-const playerStage = $('player-stage');
+const playerStage = document.querySelector('.player-stage');
 const centerPlay  = $('btn-center-play');
 const iconPlay = $('icon-play');
 const iconPause = $('icon-pause');
@@ -807,6 +807,11 @@ function isLiveStream() {
 
 function updatePlayerUI() {
   const v = $('video-el');
+  const s = playerStage;
+  if (s && s.classList) {
+    if (v.paused) s.classList.add('paused');
+    else s.classList.remove('paused');
+  }
   if (v.paused) {
     show(centerPlay);
     show(iconPlay); hide(iconPause);
