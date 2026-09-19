@@ -122,7 +122,7 @@ export function removeFavorite(contentId) {
   return Promise.resolve();
 }
 
-// Stream URLs — direct to stream server (not proxied, media doesn't need CORS)
+// Stream URLs — proxied on HTTPS (media has no CORS headers)
 export function streamUrl(type, id, ext) {
   const base = _streamBase;
   let url;
@@ -131,7 +131,7 @@ export function streamUrl(type, id, ext) {
   else                        url = `${base}/series/${_user}/${_pass}/${id}.${ext || 'mp4'}`;
 
   if (location.protocol === 'https:') {
-    return RAILWAY_PROXY + '?url=' + encodeURIComponent(url);
+    return PROXIES[_proxyIndex] + '?url=' + encodeURIComponent(url);
   }
   return url;
 }

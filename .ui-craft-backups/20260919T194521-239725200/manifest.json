@@ -1,0 +1,30 @@
+{
+  "id": "20260919T194521-239725200",
+  "createdAt": "2026-09-19T19:45:21.2397252Z",
+  "source": "install",
+  "checksum": "802a4b3d1f59f786c3de1ef482e4a3550d01162930129328363f322c01d3bcd9",
+  "compressed": true,
+  "pinned": false,
+  "fileCount": 3,
+  "createdByVersion": "1.0.20",
+  "files": [
+    {
+      "harness": "opencode",
+      "origPath": "C:\\Users\\mateu\\Documents\\webplayer\\.opencode\\skill",
+      "savedPath": "opencode\\C:\\Users\\mateu\\Documents\\webplayer\\.opencode\\skill",
+      "existedBefore": false
+    },
+    {
+      "harness": "opencode",
+      "origPath": "C:\\Users\\mateu\\Documents\\webplayer\\.opencode\\command",
+      "savedPath": "opencode\\C:\\Users\\mateu\\Documents\\webplayer\\.opencode\\command",
+      "existedBefore": false
+    },
+    {
+      "harness": "opencode",
+      "origPath": "C:\\Users\\mateu\\Documents\\webplayer\\opencode.json",
+      "savedPath": "opencode\\C:\\Users\\mateu\\Documents\\webplayer\\opencode.json",
+      "existedBefore": false
+    }
+  ]
+}
