@@ -460,7 +460,6 @@ function openPlayerModal(item) {
   const id   = item.stream_id || item._favId;
   const ext  = item.container_extension || 'mp4';
 
-  $('modal-title').textContent = item.name || '';
   $('modal-meta').textContent  = [item.genre, item.releaseDate || item.releasedate, item.duration].filter(Boolean).join(' · ');
   $('modal-plot').textContent  = item.plot || item.description || '';
 
@@ -543,6 +542,27 @@ async function openSeriesModal(item) {
   }
 }
 
+// Formata o título cru vindo da API:
+//   "8. Clássico Americano 2026 - S01E08 - Nossa Cidade" → "Nossa Cidade"
+//   "12. Título aqui"                                    → "Título aqui"
+function cleanEpisodeTitle(raw) {
+  let t = String(raw || '').trim().replace(/\s+/g, ' ');
+  if (!t) return '';
+  t = t.replace(/^\s*\d+\s*[.\-–—:)]+\s*/, '');
+  const se = t.match(/\bS\d{1,2}E\d{1,4}\b/i);
+  if (se) {
+    const after = t.slice(t.lastIndexOf(se[0]) + se[0].length).replace(/^[\s\-–—:.]*/, '').trim();
+    if (after) return after;
+  }
+  return t;
+}
+
+function episodeThumb(ep) {
+  if (ep.movie_image) return API.imgUrl(ep.movie_image);
+  if (ep.youtube_id)  return API.imgUrl(`https://img.youtube.com/vi/${ep.youtube_id}/hqdefault.jpg`);
+  return '';
+}
+
 function renderSeasons(info) {
   const wrap = $('seasons-wrap');
   wrap.innerHTML = '';
@@ -559,12 +579,60 @@ function renderSeasons(info) {
     const ul = document.createElement('ul');
     ul.className = 'episode-list';
     episodes[season].forEach(ep => {
+      const num = ep.episode_num != null ? ep.episode_num : ep.num;
+      const isPlaying = S.lastSeriesEpId != null && String(ep.id) === String(S.lastSeriesEpId);
+
       const li = document.createElement('li');
-      li.className = 'episode-item';
-      li.textContent = `${ep.episode_num}. ${ep.title || ep.name || ''}`;
-      li.addEventListener('click', () => {
+      li.className = 'episode-item' + (isPlaying ? ' playing' : '');
+      li.setAttribute('role', 'button');
+      li.setAttribute('tabindex', '0');
+
+      const thumb = document.createElement('div');
+      thumb.className = 'episode-thumb';
+      const thumbSrc = episodeThumb(ep);
+      if (thumbSrc) {
+        const img = document.createElement('img');
+        img.src = thumbSrc;
+        img.alt = '';
+        img.loading = 'lazy';
+        thumb.appendChild(img);
+      } else {
+        const no = document.createElement('span');
+        no.className = 'no-thumb';
+        no.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>';
+        thumb.appendChild(no);
+      }
+
+      const body = document.createElement('div');
+      body.className = 'episode-body';
+      const head = document.createElement('div');
+      head.className = 'episode-body-head';
+      const numEl = document.createElement('span');
+      numEl.className = 'episode-num';
+      numEl.textContent = `Episódio ${num}`;
+      head.appendChild(numEl);
+      if (isPlaying) {
+        const now = document.createElement('span');
+        now.className = 'episode-now';
+        head.appendChild(now);
+      }
+      const nameEl = document.createElement('span');
+      nameEl.className = 'episode-name';
+      nameEl.textContent = cleanEpisodeTitle(ep.title || ep.name || '') || 'Sem título';
+      body.appendChild(head);
+      body.appendChild(nameEl);
+
+      li.appendChild(thumb);
+      li.appendChild(body);
+
+      const play = () => {
+        S.lastSeriesEpId = ep.id;
         closeSeriesModal();
-        openPlayerModal({ ...ep, stream_type: 'series', stream_id: ep.id, name: `${info.info?.name} S${season}E${ep.episode_num}` });
+        openPlayerModal({ ...ep, stream_type: 'series', stream_id: ep.id, name: `${info.info?.name || ''} S${season}E${num}` });
+      };
+      li.addEventListener('click', play);
+      li.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); play(); }
       });
       ul.appendChild(li);
     });
@@ -663,6 +731,87 @@ function stopPlayer() {
   const v = $('video-el');
   v.pause(); v.src = ''; v.load();
 }
+
+// ── Player controls (overlay estilo Theater Mode) ─────────────
+const playerStage = $('player-stage');
+const centerPlay  = $('btn-center-play');
+const iconPlay = $('icon-play');
+const iconPause = $('icon-pause');
+const iconVol  = $('icon-vol');
+const iconMute = $('icon-mute');
+const iconFull = $('icon-full');
+const iconShrink = $('icon-shrink');
+
+function fmtTime(s) {
+  if (!isFinite(s)) return '0:00';
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return `${m}:${String(sec).padStart(2, '0')}`;
+}
+
+function updatePlayerUI() {
+  const v = $('video-el');
+  if (v.paused) {
+    show(centerPlay);
+    show(iconPlay); hide(iconPause);
+    playerStage.classList.add('paused');
+  } else {
+    hide(centerPlay);
+    show(iconPause); hide(iconPlay);
+    playerStage.classList.remove('paused');
+  }
+  $('player-time').textContent = `${fmtTime(v.currentTime)} / ${fmtTime(v.duration)}`;
+  const pct = v.duration ? (v.currentTime / v.duration) * 100 : 0;
+  $('player-progress-fill').style.width = `${pct}%`;
+  $('player-progress').setAttribute('aria-valuenow', Math.round(pct));
+}
+
+function togglePlay() {
+  const v = $('video-el');
+  if (v.paused) v.play().catch(() => {});
+  else v.pause();
+}
+
+function flashOverlay() {
+  playerStage.classList.toggle('show-overlay');
+}
+
+$('video-el').addEventListener('click', () => {
+  if ($('video-el').paused) togglePlay();
+  else flashOverlay();
+});
+centerPlay.addEventListener('click', () => togglePlay());
+$('btn-play').addEventListener('click', togglePlay);
+$('btn-back').addEventListener('click', () => { $('video-el').currentTime = Math.max(0, $('video-el').currentTime - 10); });
+$('btn-fwd').addEventListener('click', () => { $('video-el').currentTime = Math.min($('video-el').duration || 0, $('video-el').currentTime + 10); });
+
+$('player-progress').addEventListener('click', e => {
+  const v = $('video-el');
+  if (!v.duration) return;
+  const rect = $('player-progress').getBoundingClientRect();
+  v.currentTime = ((e.clientX - rect.left) / rect.width) * v.duration;
+});
+
+$('btn-mute').addEventListener('click', () => {
+  const v = $('video-el');
+  v.muted = !v.muted;
+  if (v.muted) { show(iconMute); hide(iconVol); } else { show(iconVol); hide(iconMute); }
+});
+
+$('btn-full').addEventListener('click', () => {
+  if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+  else playerStage.requestFullscreen().catch(() => {});
+});
+document.addEventListener('fullscreenchange', () => {
+  if (document.fullscreenElement) { show(iconShrink); hide(iconFull); }
+  else { show(iconFull); hide(iconShrink); }
+});
+
+$('video-el').addEventListener('play', updatePlayerUI);
+$('video-el').addEventListener('pause', updatePlayerUI);
+$('video-el').addEventListener('timeupdate', updatePlayerUI);
+$('video-el').addEventListener('ended', updatePlayerUI);
+$('video-el').addEventListener('loadedmetadata', updatePlayerUI);
 
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
