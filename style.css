@@ -58,7 +58,7 @@ img    { display: block; }
 
   /* Tipografia */
   --font:         'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-display: 'Cinzel', serif;
+  --font-display: 'Geist', var(--font);
 
   /* Espaço — base 4px (DS space.baseStep) */
   --space-1:    4px;

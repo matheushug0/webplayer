@@ -38,4 +38,4 @@ sem consultar ninguém.
 - Sem multi-idioma de interface
 
 ## 6. Restrições aprendidas (append-only)
-Vazio — cresce quando o usuário corrigir a UI.
+- 2026-09-19 — Display: **Cinzel → Geist** (config do usuário). Fontes self-hosted em `fonts/` (`fonts.css` + woff2); CDN removido. Referências a "Cinzel" nas seções 1–5 passam a significar Geist.

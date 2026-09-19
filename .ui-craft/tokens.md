@@ -53,7 +53,8 @@
 | `--text-2xl` | 1.5rem (24px) |
 | `--text-5xl` | 3rem (48px, hero mobile) |
 
-Pesos: `--weight-light 300` · `--weight-regular 400` · `--weight-medium 500` · `--weight-semibold 600` · `--weight-bold 700` (Cinzel carrega 400/600/800).
+Pesos: `--weight-light 300` · `--weight-regular 400` · `--weight-medium 500` · `--weight-semibold 600` · `--weight-bold 700`.
+Display: **Geist** (variável 100–900, self-hosted em `fonts/`); body é Inter (variável 100–900).
 Leading: `--leading-none 1` · `--leading-tight 1.25` · `--leading-relaxed 1.625`.
 Letter-spacing: `--tracking-tighter -.05em` · `--tracking-tight -.025em` · `--tracking-wide .025em` · `--tracking-wider .05em` · `--tracking-widest .1em`.
 
