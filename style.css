@@ -1043,8 +1043,13 @@ body {
   flex-shrink: 0; overflow: hidden;
 }
 .player-stage:fullscreen { aspect-ratio: auto; height: 100%; width: 100%; }
+#player-modal:has(.player-stage.fake-fullscreen) .player-modal-box {
+  animation: none !important;
+  transform: none !important;
+}
 .player-stage.fake-fullscreen {
-  position: fixed !important; inset: 0 !important;
+  position: fixed !important;
+  top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
   width: 100vw !important; height: 100vh !important;
   aspect-ratio: auto !important;
   z-index: 10000; background: #000;
