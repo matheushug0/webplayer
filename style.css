@@ -6,6 +6,8 @@
 
 /* ── Reset ─────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+
 html, body { height: 100%; overflow-x: clip; }
 html { scroll-behavior: smooth; }
 button { cursor: pointer; border: none; background: none; color: inherit; font: inherit; touch-action: manipulation; }
@@ -967,6 +969,10 @@ body {
 /* ══════════════════════════════════════════════════════════════
    MODALS
 ══════════════════════════════════════════════════════════════ */
+#player-modal {
+  z-index: 81;
+}
+
 .modal {
   position: fixed; inset: 0; z-index: 80;
   display: flex; align-items: center; justify-content: center;

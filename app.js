@@ -19,6 +19,25 @@ const $ = id => document.getElementById(id);
 const show = el => el.classList.remove('hidden');
 const hide = el => el.classList.add('hidden');
 
+// ── Scroll lock com profundidade + restauração ─────────────────
+// body.modal-open { overflow:hidden } zera a posição de scroll em
+// WebViews quando a classe é removida. Como player/info/série podem
+// empilhar, usamos um contador: só removemos o lock quando o último
+// modal fecha, e restauramos o scrollY salvo no mesmo frame.
+let scrollLockDepth = 0;
+let lockedScrollY = 0;
+function lockScroll() {
+  if (scrollLockDepth === 0) lockedScrollY = window.scrollY;
+  scrollLockDepth++;
+  document.body.classList.add('modal-open');
+}
+function unlockScroll() {
+  scrollLockDepth = Math.max(0, scrollLockDepth - 1);
+  if (scrollLockDepth > 0) return;
+  document.body.classList.remove('modal-open');
+  requestAnimationFrame(() => window.scrollTo(0, lockedScrollY));
+}
+
 // ── Toast ─────────────────────────────────────────────────────
 function showToast(msg, type = 'error') {
   const existing = document.getElementById('toast');
@@ -487,7 +506,7 @@ function openPlayerModal(item) {
   $('epg-list').innerHTML = '';
   $('player-topbar-title').textContent = item.name || '';
   show($('player-modal'));
-  document.body.classList.add('modal-open');
+  lockScroll();
   playStream(API.streamUrl(type, id, ext));
   if (type === 'live') loadEpg(id);
 }
@@ -495,11 +514,11 @@ function openPlayerModal(item) {
 $('btn-modal-close').addEventListener('click', closePlayerModal);
 $('modal-backdrop').addEventListener('click', closePlayerModal);
 function closePlayerModal() {
-  playerStage.classList.remove(FAKE_FULLSCREEN);
+  if (playerStage) playerStage.classList.remove(FAKE_FULLSCREEN);
   show(iconFull); hide(iconShrink);
   stopPlayer();
   hide($('player-modal'));
-  document.body.classList.remove('modal-open');
+  unlockScroll();
 }
 
 // ── Cast (Remote Playback API) ───────────────────────────────
@@ -527,12 +546,12 @@ function openInfoModal(item) {
   $('info-plot').textContent  = item.plot || item.description || '';
   updateFavBtn($('btn-info-fav'), $('info-fav-icon'), id);
   show($('info-modal'));
-  document.body.classList.add('modal-open');
+  lockScroll();
 }
 
 $('btn-info-close').addEventListener('click', closeInfoModal);
 $('info-backdrop').addEventListener('click', closeInfoModal);
-function closeInfoModal() { hide($('info-modal')); document.body.classList.remove('modal-open'); }
+function closeInfoModal() { hide($('info-modal')); unlockScroll(); }
 
 $('btn-info-play').addEventListener('click', () => {
   const item = S.currentItem;
@@ -555,7 +574,7 @@ async function openSeriesModal(item) {
 
   updateFavBtn($('btn-series-fav'), $('series-fav-icon'), id);
   show($('series-modal'));
-  document.body.classList.add('modal-open');
+  lockScroll();
 
   try {
     renderSeasons(await API.getSeriesInfo(id));
@@ -649,7 +668,7 @@ function renderSeasons(info) {
 
       const play = () => {
         S.lastSeriesEpId = ep.id;
-        closeSeriesModal();
+        S.returnToSeries = true;
         openPlayerModal({ ...ep, stream_type: 'series', stream_id: ep.id, name: `${info.info?.name || ''} S${season}E${num}` });
       };
       li.addEventListener('click', play);
@@ -665,7 +684,7 @@ function renderSeasons(info) {
 
 $('btn-series-close').addEventListener('click', closeSeriesModal);
 $('series-backdrop').addEventListener('click', closeSeriesModal);
-function closeSeriesModal() { hide($('series-modal')); document.body.classList.remove('modal-open'); }
+function closeSeriesModal() { hide($('series-modal')); unlockScroll(); }
 
 // ── EPG ───────────────────────────────────────────────────────
 async function loadEpg(streamId) {
@@ -882,25 +901,31 @@ $('btn-mute').addEventListener('click', () => {
 
 const FAKE_FULLSCREEN = 'fake-fullscreen';
 $('btn-full').addEventListener('click', () => {
+  const stage = playerStage || document.querySelector('.player-stage');
   const exitFs = document.exitFullscreen || document.webkitExitFullscreen;
-  const enterFs = playerStage.requestFullscreen || playerStage.webkitRequestFullscreen;
-  const isNative = document.fullscreenElement || document.webkitFullscreenElement;
-  if (playerStage.classList.contains(FAKE_FULLSCREEN)) {
-    playerStage.classList.remove(FAKE_FULLSCREEN);
+  const enterFs = stage ? (stage.requestFullscreen || stage.webkitRequestFullscreen) : null;
+  isNative = isNative || document.webkitFullscreenElement;
+  if (!stage) { showToast('Player indisponível.', 'error'); return; }
+  if (stage.classList.contains(FAKE_FULLSCREEN)) {
+    stage.classList.remove(FAKE_FULLSCREEN);
     show(iconFull); hide(iconShrink);
     return;
   }
   if (isNative) {
     if (exitFs) exitFs.call(document);
   } else if (enterFs) {
-    enterFs.call(playerStage);
+    enterFs.call(stage);
   } else {
-    playerStage.classList.add(FAKE_FULLSCREEN);
+    stage.classList.add(FAKE_FULLSCREEN);
     hide(iconFull); show(iconShrink);
   }
 });
 document.addEventListener('fullscreenchange', () => {
-  if (document.fullscreenElement) { show(iconShrink); hide(iconFull); }
+  if (document.fullscreenElement || document.webkitFullscreenElement) { show(iconShrink); hide(iconFull); }
+  else { show(iconFull); hide(iconShrink); }
+});
+document.addEventListener('webkitfullscreenchange', () => {
+  if (document.webkitFullscreenElement) { show(iconShrink); hide(iconFull); }
   else { show(iconFull); hide(iconShrink); }
 });
 
