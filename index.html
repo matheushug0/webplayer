@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"/>
@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#050505"/>
   <link rel="icon" type="image/png" href="logo.png"/>
   <link rel="stylesheet" href="fonts/fonts.css"/>
-  <link rel="stylesheet" href="style.css?v=4"/>
+  <link rel="stylesheet" href="style.css?v=5"/>
 </head>
 <body>
 
@@ -182,8 +182,9 @@
       </button>
     </div>
     <div class="player-stage">
-      <video id="video-el" playsinline></video>
-      <div class="player-overlay">
+      <div class="player-viewport">
+        <video id="video-el" playsinline></video>
+        <div class="player-overlay">
         <button id="btn-center-play" class="player-center-play hidden" aria-label="Reproduzir">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg>
         </button>
@@ -215,9 +216,10 @@
                 <svg id="icon-shrink" class="hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/></svg>
               </button>
             </div>
-          </div>
-        </div>
+</div>
       </div>
+      </div>
+    </div>
     </div>
     <div class="modal-info">
       <p id="modal-meta"></p>
@@ -291,6 +293,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/hls.js@1/dist/hls.min.js"></script>
-<script type="module" src="app.js?v=4"></script>
+<script type="module" src="app.js?v=5"></script>
 </body>
 </html>
