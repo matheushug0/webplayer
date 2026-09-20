@@ -1066,6 +1066,12 @@ body {
 .player-stage.fake-fullscreen .player-overlay,
 .player-stage.fake-fullscreen .player-controls { opacity: 1 !important; pointer-events: auto !important; transform: translateY(0) !important; }
 
+/* Touch: controles sempre visiveis (sem depender de :hover, que nao existe em celular) */
+@media (hover: none) and (pointer: coarse) {
+  .player-stage .player-overlay,
+  .player-stage .player-controls { opacity: 1 !important; pointer-events: auto !important; transform: translateY(0) !important; }
+}
+
 .player-center-play {
   position: absolute; top: 50%; left: 50%;
   transform: translate(-50%, -50%);
