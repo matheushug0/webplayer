@@ -1063,6 +1063,9 @@ body {
 .player-stage.show-overlay .player-overlay,
 .player-stage:fullscreen:hover .player-overlay { opacity: 1; pointer-events: auto; }
 
+.player-stage.fake-fullscreen .player-overlay,
+.player-stage.fake-fullscreen .player-controls { opacity: 1 !important; pointer-events: auto !important; transform: translateY(0) !important; }
+
 .player-center-play {
   position: absolute; top: 50%; left: 50%;
   transform: translate(-50%, -50%);

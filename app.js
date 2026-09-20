@@ -914,21 +914,23 @@ $('btn-full').addEventListener('click', () => {
   }
   if (isNative) {
     if (exitFs) exitFs.call(document);
+    playerStage.classList.remove('show-overlay');
   } else if (enterFs) {
     enterFs.call(stage);
+    stage.classList.add('show-overlay');
   } else {
     stage.classList.add(FAKE_FULLSCREEN);
+    stage.classList.add('show-overlay');
     hide(iconFull); show(iconShrink);
   }
 });
-document.addEventListener('fullscreenchange', () => {
-  if (document.fullscreenElement || document.webkitFullscreenElement) { show(iconShrink); hide(iconFull); }
+function syncFullscreenIcons() {
+  const fs = document.fullscreenElement || document.webkitFullscreenElement;
+  if (fs) { show(iconShrink); hide(iconFull); }
   else { show(iconFull); hide(iconShrink); }
-});
-document.addEventListener('webkitfullscreenchange', () => {
-  if (document.webkitFullscreenElement) { show(iconShrink); hide(iconFull); }
-  else { show(iconFull); hide(iconShrink); }
-});
+}
+document.addEventListener('fullscreenchange', syncFullscreenIcons);
+document.addEventListener('webkitfullscreenchange', syncFullscreenIcons);
 
 $('video-el').addEventListener('play', updatePlayerUI);
 $('video-el').addEventListener('pause', updatePlayerUI);
