@@ -156,7 +156,7 @@ body {
 .text-glow  { text-shadow: 0 0 10px rgba(255,51,75,.4); }
 
 .streaming-gradient-text {
-  background: linear-gradient(90deg, var(--cinnabar) 0%, var(--neon) 100%);
+  background: linear-gradient(90deg, #B24AF7 0%, #F83244 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -272,7 +272,7 @@ body {
 #btn-login {
   position: relative;
   width: 100%; height: 52px;
-  background: linear-gradient(90deg, var(--cinnabar) 0%, var(--neon) 100%);
+  background: linear-gradient(90deg, #B24AF7 0%, #F83244 100%);
   color: #fff;
   border-radius: 4px;
   font-size: 16px; font-weight: 600;
@@ -312,31 +312,52 @@ body {
 /* Footer */
 .login-footer {
   position: relative; z-index: 1;
-  background: rgba(0,0,0,.75);
+  background:
+    linear-gradient(180deg, rgba(6,6,10,.55) 0%, rgba(3,3,5,.9) 100%);
   border-top: 1px solid var(--border);
-  padding: 30px clamp(24px, 5vw, 60px);
+  padding: 40px clamp(24px, 5vw, 60px) 28px;
+}
+.login-footer::before {
+  content: '';
+  position: absolute; top: -1px; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #B24AF7 20%, #F83244 50%, #B24AF7 80%, transparent);
+  opacity: .7;
 }
 .login-footer-inner {
   max-width: 1000px; margin: 0 auto;
-  display: flex; flex-direction: column; gap: 16px;
+  display: flex; flex-direction: column; gap: 22px;
 }
 .login-footer-contact {
-  font-size: 13px; color: var(--text-3);
+  font-size: 15px; color: var(--text-2);
 }
-.login-footer-contact a { color: var(--text-3); text-decoration: underline; }
-.login-footer-contact a:hover { color: var(--neon); }
+.login-footer-contact a {
+  color: #fff; font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255,255,255,.35);
+  transition: color .25s, border-color .25s;
+}
+.login-footer-contact a:hover { color: var(--neon); border-color: var(--neon); }
 .login-footer-links {
   display: grid;
-  grid-template-columns: repeat(4, auto);
-  gap: 8px 16px;
+  grid-template-columns: repeat(3, auto);
+  column-gap: 28px; row-gap: 10px;
   width: fit-content;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
 }
 .login-footer-links a {
   font-size: 13px; color: var(--text-3);
   text-decoration: none;
   transition: color .3s;
 }
-.login-footer-links a:hover { color: var(--neon); text-decoration: underline; }
+.login-footer-links a:hover { color: var(--neon); }
+.login-footer-tag {
+  margin-top: 6px;
+  font-size: 12px; letter-spacing: .28em; text-transform: uppercase;
+  text-align: center; color: var(--text-3);
+}
+.login-footer-tag::before { content: ''; display: block; width: 44px; height: 3px; margin: 0 auto 10px; border-radius: 2px; background: linear-gradient(90deg, #B24AF7, #F83244); }
 
 .login-lang {
   display: inline-flex; align-items: center; gap: 8px;
