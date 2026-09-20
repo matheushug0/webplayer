@@ -914,7 +914,12 @@ $('btn-full').addEventListener('click', () => {
     return;
   }
   if (isNative) {
-    if (exitFs) exitFs.call(document);
+    if (exitFs) {
+      try {
+        const p = exitFs.call(document);
+        if (p && typeof p.catch === 'function') p.catch(() => {});
+      } catch (_) {}
+    }
     playerStage.classList.remove('show-overlay');
   } else if (enterFs) {
     enterFs.call(stage);
@@ -927,6 +932,7 @@ $('btn-full').addEventListener('click', () => {
 });
 function syncFullscreenIcons() {
   const fs = document.fullscreenElement || document.webkitFullscreenElement;
+  isNative = !!fs;
   if (fs) { show(iconShrink); hide(iconFull); }
   else { show(iconFull); hide(iconShrink); }
 }
