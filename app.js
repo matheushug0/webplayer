@@ -899,3 +899,29 @@ document.addEventListener('keydown', e => {
   else if (!$('info-modal').classList.contains('hidden')) closeInfoModal();
   else if (!$('series-modal').classList.contains('hidden')) closeSeriesModal();
 });
+
+// ── Global error surface ────────────────────────────────────────
+// Leva o erro silencioso (tela preta / recarga sem motivo) para a tela,
+// em vez de deixar a pagina morta. Remove/ajusta este bloco depois do debug.
+(function installErrorSurface() {
+  const el = document.createElement('pre');
+  el.id = 'err-surface';
+  Object.assign(el.style, {
+    position: 'fixed',
+    top: '0', left: '0',
+    margin: '0', padding: '12px',
+    background: '#000', color: '#ffe08a',
+    font: '12px/1.4 monospace',
+    whiteSpace: 'pre-wrap', wordBreak: 'break-word',
+    zIndex: '99999', maxWidth: '100vw', maxHeight: '50vh', overflow: 'auto',
+  });
+  function paint(label, msg, src) {
+    if (document.body && el.parentNode !== document.body) document.body.appendChild(el);
+    el.textContent += `\n[${label}] ${msg || ''}\n${src ? '  @ ' + src : ''}`;
+  }
+  window.addEventListener('error', ev => paint('ERRO', ev.message, ev.filename + ':' + ev.lineno));
+  window.addEventListener('unhandledrejection', ev => {
+    const r = ev.reason;
+    paint('PROMISE', r && (r.message || r.stack) || String(r));
+  });
+})();
