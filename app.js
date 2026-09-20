@@ -879,8 +879,15 @@ $('btn-mute').addEventListener('click', () => {
 });
 
 $('btn-full').addEventListener('click', () => {
-  if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
-  else playerStage.requestFullscreen().catch(() => {});
+  const exitFs = document.exitFullscreen || document.webkitExitFullscreen;
+  const enterFs = playerStage.requestFullscreen || playerStage.webkitRequestFullscreen;
+  if (document.fullscreenElement || document.webkitFullscreenElement) {
+    if (exitFs) exitFs.call(document);
+  } else if (enterFs) {
+    enterFs.call(playerStage);
+  } else {
+    showToast('Navegador não suporta tela cheia.', 'error');
+  }
 });
 document.addEventListener('fullscreenchange', () => {
   if (document.fullscreenElement) { show(iconShrink); hide(iconFull); }
