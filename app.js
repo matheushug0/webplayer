@@ -495,6 +495,8 @@ function openPlayerModal(item) {
 $('btn-modal-close').addEventListener('click', closePlayerModal);
 $('modal-backdrop').addEventListener('click', closePlayerModal);
 function closePlayerModal() {
+  playerStage.classList.remove(FAKE_FULLSCREEN);
+  show(iconFull); hide(iconShrink);
   stopPlayer();
   hide($('player-modal'));
   document.body.classList.remove('modal-open');
@@ -878,15 +880,23 @@ $('btn-mute').addEventListener('click', () => {
   if (v.muted) { show(iconMute); hide(iconVol); } else { show(iconVol); hide(iconMute); }
 });
 
+const FAKE_FULLSCREEN = 'fake-fullscreen';
 $('btn-full').addEventListener('click', () => {
   const exitFs = document.exitFullscreen || document.webkitExitFullscreen;
   const enterFs = playerStage.requestFullscreen || playerStage.webkitRequestFullscreen;
-  if (document.fullscreenElement || document.webkitFullscreenElement) {
+  const isNative = document.fullscreenElement || document.webkitFullscreenElement;
+  if (playerStage.classList.contains(FAKE_FULLSCREEN)) {
+    playerStage.classList.remove(FAKE_FULLSCREEN);
+    show(iconFull); hide(iconShrink);
+    return;
+  }
+  if (isNative) {
     if (exitFs) exitFs.call(document);
   } else if (enterFs) {
     enterFs.call(playerStage);
   } else {
-    showToast('Navegador não suporta tela cheia.', 'error');
+    playerStage.classList.add(FAKE_FULLSCREEN);
+    hide(iconFull); show(iconShrink);
   }
 });
 document.addEventListener('fullscreenchange', () => {
