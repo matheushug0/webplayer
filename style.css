@@ -780,7 +780,7 @@ body {
 
 /* Touch full-bleed no mobile — setas só agregam em pointer fino; esconde.
    Desktop/track teclado seguem com setas. */
-@media (max-width: 639px) {
+@media (max-width: 899px) {
   .carousel-arrows { display: none; }
 }
 
@@ -791,6 +791,7 @@ body {
   display: flex; flex-direction: column; gap: 8px;
   cursor: pointer;
   scroll-snap-align: start;
+  touch-action: manipulation;   /* sem delay de double-tap-zoom: abre no toque */
   border-radius: var(--radius-lg);
 }
 .card:focus-visible {
