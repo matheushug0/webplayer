@@ -507,6 +507,7 @@ function openPlayerModal(item) {
   $('player-topbar-title').textContent = item.name || '';
   show($('player-modal'));
   lockScroll();
+  if (playerStage) playerStage.classList.add('show-overlay');
   playStream(API.streamUrl(type, id, ext));
   if (type === 'live') loadEpg(id);
 }
