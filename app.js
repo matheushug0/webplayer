@@ -900,6 +900,7 @@ $('btn-mute').addEventListener('click', () => {
 });
 
 const FAKE_FULLSCREEN = 'fake-fullscreen';
+let isNative = false;
 $('btn-full').addEventListener('click', () => {
   const stage = playerStage || document.querySelector('.player-stage');
   const exitFs = document.exitFullscreen || document.webkitExitFullscreen;
